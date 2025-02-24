@@ -204,21 +204,27 @@ const Game = (props: PropsWithoutRef<GameProps>) => {
         <main>
             <div className="fixed bottom-1 right-72 z-10 mt-10 text-xs text-white/15">{scenario.id}</div>
 
-            <IconButton href={'/app/tutorial'} hoverText={'Help'}>
-                <div className="border-carousel-dots button-shadow fixed right-[180px] top-6 z-10 flex w-[38px] cursor-pointer items-center justify-center rounded-full border bg-map font-barlow text-3xl text-secondary hover:bg-sidebar-foreground">
-                    ?
-                </div>
-            </IconButton>
+            {!props.revealSolution && (
+                <>
+                    <IconButton href={'/app/tutorial'} hoverText={'Help'}>
+                        <div className="border-carousel-dots button-shadow fixed right-[180px] top-6 z-10 flex w-[38px] cursor-pointer items-center justify-center rounded-full border bg-map font-barlow text-3xl text-secondary hover:bg-sidebar-foreground">
+                            ?
+                        </div>
+                    </IconButton>
 
-            <IconButton href={props.backstageAccess ? '/backstage/scenarios' : '/app/scores'} hoverText={'Options'}>
-                <Image
-                    src="/images/gear.svg"
-                    width={27}
-                    height={27}
-                    alt="Options"
-                    className="border-carousel-dots button-shadow fixed right-[108px] top-6 z-10 h-[38px] w-[38px] cursor-pointer rounded-full border bg-map p-1 hover:bg-sidebar-foreground"
-                />
-            </IconButton>
+                    <IconButton
+                        href={props.backstageAccess ? '/backstage/scenarios' : '/app/scores'}
+                        hoverText={'Options'}>
+                        <Image
+                            src="/images/gear.svg"
+                            width={27}
+                            height={27}
+                            alt="Options"
+                            className="border-carousel-dots button-shadow fixed right-[108px] top-6 z-10 h-[38px] w-[38px] cursor-pointer rounded-full border bg-map p-1 hover:bg-sidebar-foreground"
+                        />
+                    </IconButton>
+                </>
+            )}
 
             {!props.backstageAccess && !props.revealSolution && (
                 <>
@@ -236,21 +242,17 @@ const Game = (props: PropsWithoutRef<GameProps>) => {
                 </>
             )}
 
-            {isMapReady && (
+            {isMapReady && !props.revealSolution && (
                 <>
                     <GameProgress
                         className="fixed left-16 top-5 z-10 transition-all hover:scale-110"
                         total={scenario.data.solution.length}
-                        progress={
-                            props.revealSolution
-                                ? scenario.data.solution.length
-                                : scenario.data.numberCorrect(selectedPairs)
-                        }
+                        progress={scenario.data.numberCorrect(selectedPairs)}
                     />
                     <GameTimer
                         className="fixed left-36 top-5 z-10 transition-all hover:scale-110"
                         initialCount={GAME_TIMEOUT_MS / 1000}
-                        running={!props.revealSolution ? !props.countdownRunning && gameSuccess === null : false}
+                        running={!props.countdownRunning && gameSuccess === null}
                         onComplete={() => setGameSuccess(false)}
                     />
                 </>
