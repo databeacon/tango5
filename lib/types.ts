@@ -7,8 +7,12 @@ export type UserGameInsert = InferInsertModel<typeof UserGamesTable>;
 export type UserGameSelect = InferSelectModel<typeof UserGamesTable>;
 export type UserSelect = InferSelectModel<typeof UsersTable>;
 
-export type ScenarioUserGame = Omit<ScenarioSelect, 'data'> & { data: Scenario };
+export type UserGameInsertPayload = Pick<UserGameInsert, 'scenarioId' | 'playTime' | 'success'> & {
+    isDemo: boolean;
+    played: ScenarioSelect['id'][];
+};
 
+export type ScenarioUserGame = Omit<ScenarioSelect, 'data'> & { data: Scenario };
 export type CompleteDemoPayload = {
     played: ScenarioSelect['id'][];
 };

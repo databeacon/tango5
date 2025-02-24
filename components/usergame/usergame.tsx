@@ -4,7 +4,7 @@ import { ScenarioSelect, ScenarioUserGame } from '~/lib/types';
 import { GameNextButton } from '~/components/game/game-next-button';
 import { Game, ResetGameHandle } from '../game/game';
 import { useRouter } from 'next/navigation';
-import { completeDemoGame, completeUserGame } from '~/lib/actions';
+import { completeUserGame } from '~/lib/actions';
 import posthog from 'posthog-js';
 import { Scenario } from '~/lib/domain/scenario';
 import { toast } from 'sonner';
@@ -40,11 +40,6 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
     const [nextScenarioState, completeGameAction, completionPending] = useActionState(completeUserGame, {
         scenario: props.scenario,
         pendingScenarios: props.remainingScenarios ?? 0,
-        error: false
-    });
-    const [nextDemoScenarioState, completeDemoAction, completionDemoPending] = useActionState(completeDemoGame, {
-        scenario: props.scenario,
-        pendingScenarios: props.remainingScenarios ?? 0,
         played: [props.scenario.id],
         error: false
     });
@@ -61,43 +56,23 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
         (success: boolean, playTime: string | null) => {
             if (props.backstageAccess) return;
 
-            if (!isDemo) {
-                startTransition(async () => {
-                    completeGameAction({
-                        scenarioId: scenario.id,
-                        playTime: playTime,
-                        success: success
-                    });
-                });
-                posthog.capture(posthogEvents.gameFinish, {
+            startTransition(async () => {
+                completeGameAction({
                     scenarioId: scenario.id,
-                    success
+                    playTime: playTime,
+                    success: success,
+                    played: [...nextScenarioState.played, scenario.id],
+                    isDemo: isDemo || false
                 });
-            }
-            if (isDemo) {
-                startTransition(async () => {
-                    if (nextDemoScenarioState.error) return;
-
-                    completeDemoAction({
-                        played: [...nextDemoScenarioState.played, scenario.id]
-                    });
-                });
-                posthog.capture(posthogEvents.demoFinish, {
-                    scenarioId: scenario.id,
-                    success
-                });
-            }
+            });
+            posthog.capture(!isDemo ? posthogEvents.gameFinish : posthogEvents.demoFinish, {
+                scenarioId: scenario.id,
+                success
+            });
 
             setEnableNext(true);
         },
-        [
-            scenario.id,
-            props.backstageAccess,
-            completeGameAction,
-            completeDemoAction,
-            isDemo,
-            nextDemoScenarioState.error
-        ]
+        [scenario.id, props.backstageAccess, completeGameAction, isDemo]
     );
 
     const handleNextScenario = () => {
@@ -134,13 +109,13 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
         }
 
         if (isDemo) {
-            if (nextDemoScenarioState.error) {
+            if (nextScenarioState.error) {
                 toast.error('Something went wrong, could not load next demo scenario');
                 replace('/login');
                 return;
             }
 
-            const { scenario: nextScenario, pendingScenarios } = nextDemoScenarioState;
+            const { scenario: nextScenario, pendingScenarios } = nextScenarioState;
 
             // There are no more scenarios to play, redirect to games page
             if (!nextScenario || pendingScenarios <= 0) {
@@ -186,7 +161,7 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
                     <GameNextButton
                         className="fixed bottom-12 right-24 z-10 px-8"
                         disabled={!enableNext}
-                        loading={isDemo ? completionDemoPending : completionPending}
+                        loading={completionPending}
                         loadingText={'Saving...'}
                         onClick={handleNextScenario}>
                         {scenariosInARow >= GAME_MAX_SCENARIOS_IN_A_ROW ? 'Finish' : 'Next'}
