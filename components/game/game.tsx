@@ -18,7 +18,7 @@ type GameProps = {
     endGame: (success: boolean, playTime: string | null) => void;
 };
 
-type ResetGameHandle = {
+export type ResetGameHandle = {
     resetGame: () => void;
 };
 

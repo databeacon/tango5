@@ -2,7 +2,7 @@
 import { PropsWithoutRef, startTransition, useActionState, useCallback, useRef, useState } from 'react';
 import { ScenarioUserGame, UserGameProps } from '~/lib/types';
 import { GameNextButton } from '~/components/game/game-next-button';
-import { Game } from '../game/game';
+import { Game, ResetGameHandle } from '../game/game';
 import { useRouter } from 'next/navigation';
 import { completeDemoGame, completeUserGame } from '~/lib/actions';
 import posthog from 'posthog-js';
@@ -14,7 +14,7 @@ import { GAME_MAX_SCENARIOS_IN_A_ROW, posthogEvents } from '~/lib/constants';
 
 const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
     const isDemo = props.demoMode;
-    const gameRef = useRef<{ resetGame: () => void }>(null);
+    const gameRef = useRef<ResetGameHandle>(null);
     const { replace } = useRouter();
 
     const [scenario, setScenario] = useState<ScenarioUserGame>({
