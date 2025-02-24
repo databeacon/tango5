@@ -39,7 +39,7 @@ export const GameMenu = (props: PropsWithChildren<GameMenuProps>) => {
                                     Scores
                                 </Link>
                             </li>
-                            <li className="w-full border-b border-white pb-3">
+                            <li className="w-full border-b border-white pb-3 last:border-none">
                                 <Link className="hover:text-background" href="/app/tutorial">
                                     Help
                                 </Link>
