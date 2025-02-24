@@ -56,7 +56,6 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
                         <LoadingSpinner size={36} />
                     </div>
                 )}
-                {/* TODO: GameLayout should hide all buttons and icons */}
                 {!loading && props.scenario && <GameLayout scenario={props.scenario} revealSolution />}{' '}
                 {!loading && !props.scenario && <span>{'Error loading scenario'}</span>}
             </div>
