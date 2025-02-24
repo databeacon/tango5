@@ -5,7 +5,7 @@ import { ScenarioSelect } from '~/lib/types';
 import { GameInitialCountdown } from '~/components/game/game-initial-countdown';
 import { UserGame } from '~/components/usergame/usergame';
 
-type GameLayoutProps = {
+type GameSceneProps = {
     scenario: ScenarioSelect;
     revealSolution?: boolean;
     backstageAccess?: boolean;
@@ -13,7 +13,7 @@ type GameLayoutProps = {
     demoMode?: boolean;
 };
 
-export const GameScene = (props: PropsWithoutRef<GameLayoutProps>) => {
+export const GameScene = (props: PropsWithoutRef<GameSceneProps>) => {
     const [countdownRunning, setCountdownRunning] = useState(!props.revealSolution);
 
     if (!props.revealSolution) {
