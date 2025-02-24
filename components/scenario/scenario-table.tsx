@@ -128,8 +128,7 @@ export const ScenariosTable = () => {
 };
 
 const ActiveCell = ({ row }: { row: Row<ScenarioSelect> }) => {
-    const active = row.getValue('active') as boolean;
-    const id = row.getValue('id') as number;
+    const { id, active } = row.original;
     const { action } = useDialogAction(
         `Changing visibility for scenario #${id}`,
         changeScenarioVisibility,
@@ -143,8 +142,7 @@ const ActiveCell = ({ row }: { row: Row<ScenarioSelect> }) => {
 };
 
 const DemoCell = ({ row }: { row: Row<ScenarioSelect> }) => {
-    const active = row.getValue('demo') as boolean;
-    const id = row.getValue('id') as number;
+    const { id, demo } = row.original;
     const { action } = useDialogAction(
         `Changing is demo for scenario #${id}`,
         changeScenarioIsDemo,
@@ -152,7 +150,7 @@ const DemoCell = ({ row }: { row: Row<ScenarioSelect> }) => {
     );
     return (
         <div className="mr-2 flex justify-end">
-            <CheckboxAction action={(value: boolean) => action({ id, demo: value })} checked={active} />
+            <CheckboxAction action={(value: boolean) => action({ id, demo: value })} checked={demo} />
         </div>
     );
 };
