@@ -51,7 +51,7 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
         <PopupWindow
             ref={popupRef}
             title={`Solution for scenario ${props.scenario?.id ? `#${props.scenario.id}` : ''}`}>
-            <div className="flex min-w-[1000px] flex-col gap-6">
+            <div className="flex min-h-[60vh] min-w-[1000px] flex-col gap-6">
                 {loading && (
                     <div className="flex h-[60vh] items-center justify-center">
                         <LoadingSpinner size={36} />
