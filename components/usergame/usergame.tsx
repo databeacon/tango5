@@ -52,16 +52,9 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
     const handleGameStart = useCallback(() => {
         if (props.backstageAccess) return;
 
-        if (!isDemo) {
-            posthog.capture(posthogEvents.gameStart, {
-                scenarioId: scenario.id
-            });
-        }
-        if (isDemo) {
-            posthog.capture(posthogEvents.demoStart, {
-                scenarioId: scenario.id
-            });
-        }
+        posthog.capture(isDemo ? posthogEvents.demoStart : posthogEvents.gameStart, {
+            scenarioId: scenario.id
+        });
     }, [scenario.id, props.backstageAccess, isDemo]);
 
     const handleGameFinish = useCallback(
