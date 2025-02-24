@@ -135,7 +135,7 @@ const Game = ({ ref, ...props }: GameProps) => {
 
     return (
         <main>
-            {isMapReady && (
+            {isMapReady && !props.revealSolution && (
                 <>
                     <GameProgress
                         className="fixed left-16 top-5 z-10 transition-all hover:scale-110"
@@ -147,7 +147,7 @@ const Game = ({ ref, ...props }: GameProps) => {
                     <GameTimer
                         className="fixed left-36 top-5 z-10 transition-all hover:scale-110"
                         initialCount={GAME_TIMEOUT_MS / 1000}
-                        running={!props.revealSolution ? !props.countdownRunning && gameSuccess === null : false}
+                        running={!props.countdownRunning && gameSuccess === null}
                         onComplete={() => setGameSuccess(false)}
                     />
                 </>
