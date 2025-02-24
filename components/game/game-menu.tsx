@@ -11,9 +11,9 @@ export const GameMenu = (props: PropsWithChildren<GameMenuProps>) => {
     return (
         <>
             {props.open && (
-                <div className="absolute z-50 h-svh w-full">
+                <div className="absolute z-30 h-svh w-full">
                     <div className={'blur-md'}>{props.children}</div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-translucent">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-10 bg-translucent">
                         {!props.backstageAccess && (
                             <section className="flex items-center justify-center gap-x-10">
                                 <GamePerformanceStat
@@ -26,8 +26,10 @@ export const GameMenu = (props: PropsWithChildren<GameMenuProps>) => {
                                 />
                             </section>
                         )}
-                        <ul>
-                            <li onClick={props.handleCloseMenu}>Resume</li>
+                        <ul className="w-96 space-y-3 rounded-3xl bg-map p-5 font-barlow text-2xl font-light">
+                            <li className="w-full border-b border-map">
+                                <button onClick={props.handleCloseMenu}>Resume</button>
+                            </li>
                             <li>option 1</li>
                             <li>option 1</li>
                             <li>option 1</li>
