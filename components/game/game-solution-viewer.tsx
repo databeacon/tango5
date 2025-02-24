@@ -38,15 +38,13 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
         const popup = popupRef.current;
         if (!popup) return;
 
-        const closeCallback = () => onClose();
-
-        const closeCallbackWithDelay = () => {
-            setTimeout(closeCallback, ANIMATION_DURATION);
+        const closeCallback = () => {
+            setTimeout(onClose, ANIMATION_DURATION);
         };
 
-        popup.addEventListener('close', closeCallbackWithDelay);
+        popup.addEventListener('close', closeCallback);
         return () => {
-            popup.removeEventListener('close', closeCallbackWithDelay);
+            popup.removeEventListener('close', closeCallback);
         };
     }, [onClose]);
 
