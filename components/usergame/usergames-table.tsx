@@ -2,23 +2,24 @@
 
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Check, X } from 'lucide-react';
-import { PropsWithoutRef, startTransition, useActionState, useEffect, useState } from 'react';
+import { PropsWithoutRef, useState } from 'react';
 import { DataTable } from '~/components/ui/data-table';
 import { UserGameDeleteDialog } from '~/components/usergame/usergame-delete-dialog';
 import { usePagination } from '~/hooks/use-pagination';
 import { useTableApi } from '~/hooks/use-table-api';
 import { TableContext } from '~/hooks/use-table-context';
-import { getCurrentUserGamesPage, getScenario, getUserGamesPage } from '~/lib/actions';
+import { getCurrentUserGamesPage, getUserGamesPage } from '~/lib/actions';
 import { ScenarioSelect, UserGameSelect } from '~/lib/types';
 import { formatDuration } from '~/lib/utils';
 import { GameSolutionViewer } from '../game/game-solution-viewer';
-import { toast } from 'sonner';
 
 type UserGamesTableProps = {
     adminAccess: boolean;
 };
 
-const userColumns: ColumnDef<UserGameSelect>[] = [
+type TableData = UserGameSelect & { scenarioData: ScenarioSelect['data'] };
+
+const userColumns: ColumnDef<TableData>[] = [
     {
         accessorKey: 'scenarioId',
         header: () => <div className="text-center">Scenario</div>,
@@ -48,7 +49,7 @@ const userColumns: ColumnDef<UserGameSelect>[] = [
     }
 ];
 
-const adminColumns: ColumnDef<UserGameSelect>[] = [
+const adminColumns: ColumnDef<TableData>[] = [
     {
         accessorKey: 'id',
         header: () => <div className="text-center">Game</div>
@@ -75,12 +76,7 @@ const adminColumns: ColumnDef<UserGameSelect>[] = [
 ];
 
 export const UserGamesTable = (props: PropsWithoutRef<UserGamesTableProps>) => {
-    const [showSolution, setShowSolution] = useState(false);
-    const [scenario, setScenario] = useState<ScenarioSelect | undefined>(undefined);
-    const [solutionScenarioState, getSolutionScenario, isLoadingSolution] = useActionState(getScenario, {
-        scenario: undefined,
-        error: false
-    });
+    const [selectedScenario, setSelectedScenario] = useState<ScenarioSelect | undefined>(undefined);
     const { pagination, onPaginationChange, limit, offset } = usePagination();
 
     const { data, rowCount, loading, forceRefresh } = useTableApi(
@@ -89,26 +85,15 @@ export const UserGamesTable = (props: PropsWithoutRef<UserGamesTableProps>) => {
         offset
     );
 
-    const handleRowClick = (row: Row<UserGameSelect>) => {
-        setShowSolution(true);
-        startTransition(async () => {
-            getSolutionScenario(row.original.scenarioId);
-        });
+    const handleRowClick = (row: Row<TableData>) => {
+        setSelectedScenario({
+            id: row.original.scenarioId,
+            data: row.original.scenarioData,
+            active: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }); // TODO: we should not have to pass all the fields to the game component, just the id and the data should be enough
     };
-
-    const handleCloseDialog = () => {
-        setShowSolution(false);
-        setScenario(undefined);
-    };
-
-    useEffect(() => {
-        if (solutionScenarioState.error) {
-            toast.error(`Failed to get solution from scenario: ${solutionScenarioState.errorMessage}`);
-            return;
-        }
-
-        setScenario(solutionScenarioState.scenario);
-    }, [solutionScenarioState]);
 
     return (
         <>
@@ -124,12 +109,7 @@ export const UserGamesTable = (props: PropsWithoutRef<UserGamesTableProps>) => {
                     initialState={{ columnVisibility: { data: false } }}
                 />
             </TableContext>
-            <GameSolutionViewer
-                open={showSolution}
-                onClose={handleCloseDialog}
-                scenario={scenario}
-                loading={isLoadingSolution}
-            />
+            <GameSolutionViewer scenario={selectedScenario} onClose={() => setSelectedScenario(undefined)} />
         </>
     );
 };
