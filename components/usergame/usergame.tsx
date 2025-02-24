@@ -88,7 +88,7 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
 
             setEnableNext(true);
         },
-        [scenario.id, props.backstageAccess, completeGameAction, completeDemoAction, isDemo]
+        [scenario.id, props.backstageAccess, completeGameAction, completeDemoAction, isDemo, nextDemoScenarioState]
     );
 
     const handleNextScenario = () => {
