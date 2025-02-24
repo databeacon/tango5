@@ -1,20 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { ScenarioDeleteDialog } from '~/components/scenario/scenario-delete-dialog';
-import { type ScenarioData } from '~/lib/domain/scenario';
 import { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from '~/components/ui/data-table';
-import { Download, PlayIcon, EyeIcon } from 'lucide-react';
+import { Download, PlayIcon } from 'lucide-react';
 import { usePagination } from '~/hooks/use-pagination';
 import { useTableApi } from '~/hooks/use-table-api';
-import { getScenariosPage } from '~/lib/actions';
 import { TableContext } from '~/hooks/use-table-context';
-import { ScenarioUploadDialog } from './scenario-upload-dialog';
+import { getScenariosPage } from '~/lib/actions';
 import { Flight } from '~/lib/domain/flight';
 import { Pcd } from '~/lib/domain/pcd';
 import { ScenarioSelect } from '~/lib/types';
-import { ScenarioActiveCheckbox } from './scenario-active-checkbox';
+import { DataTable } from '~/components/ui/data-table';
+import { ScenarioActiveCheckbox } from '~/components/scenario/scenario-active-checkbox';
+import { ScenarioCheckSolution } from '~/components/scenario/scenario-check-solution';
+import { ScenarioDeleteDialog } from '~/components/scenario/scenario-delete-dialog';
+import { ScenarioUploadDialog } from '~/components/scenario/scenario-upload-dialog';
 
 export const columns: ColumnDef<ScenarioSelect>[] = [
     {
@@ -28,7 +28,7 @@ export const columns: ColumnDef<ScenarioSelect>[] = [
         accessorKey: 'flights',
         header: () => <div className="text-right">Flights</div>,
         cell: ({ row }) => {
-            const scenarioData = row.getValue('data') as ScenarioData;
+            const { data: scenarioData } = row.original;
 
             return <div className="text-right font-medium">{scenarioData.flights.length}</div>;
         }
@@ -37,7 +37,7 @@ export const columns: ColumnDef<ScenarioSelect>[] = [
         accessorKey: 'pcds',
         header: () => <div className="text-right">PCDs</div>,
         cell: ({ row }) => {
-            const scenarioData = row.getValue('data') as ScenarioData;
+            const { data: scenarioData } = row.original;
             const flightsDict: Record<string, Flight> = scenarioData.flights.reduce(
                 (acc: Record<string, Flight>, flight) => {
                     acc[flight.id] = new Flight(
@@ -71,8 +71,7 @@ export const columns: ColumnDef<ScenarioSelect>[] = [
         accessorKey: 'active',
         header: () => <div className="text-right">Active</div>,
         cell: ({ row }) => {
-            const active = row.getValue('active') as boolean;
-            const id = row.getValue('id') as number;
+            const { id, active } = row.original;
             return (
                 <div className="mr-2 flex justify-end">
                     <ScenarioActiveCheckbox id={id} checked={active} />
@@ -84,17 +83,14 @@ export const columns: ColumnDef<ScenarioSelect>[] = [
         accessorKey: 'actions',
         header: () => <div className="text-right">Actions</div>,
         cell: ({ row }) => {
-            const id = row.getValue('id') as number;
-            const data = row.getValue('data') as ScenarioData;
+            const { id, data } = row.original;
 
             return (
                 <div className="flex flex-row justify-end gap-2">
                     <Link href={`/backstage/play/${id}`}>
                         <PlayIcon size={'1rem'} />
                     </Link>
-                    <Link href={`/backstage/play/${id}?solution=true`}>
-                        <EyeIcon size={'1rem'} />
-                    </Link>
+                    <ScenarioCheckSolution scenario={row.original} />
                     <a
                         title={`Download scenario #${id}`}
                         href={`data:application/json,${JSON.stringify(data)}`}

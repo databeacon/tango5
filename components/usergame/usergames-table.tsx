@@ -109,7 +109,11 @@ export const UserGamesTable = (props: PropsWithoutRef<UserGamesTableProps>) => {
                     initialState={{ columnVisibility: { data: false } }}
                 />
             </TableContext>
-            <GameSolutionViewer scenario={selectedScenario} onClose={() => setSelectedScenario(undefined)} />
+            <GameSolutionViewer
+                scenario={selectedScenario}
+                open={!!selectedScenario}
+                onClose={() => setSelectedScenario(undefined)}
+            />
         </>
     );
 };

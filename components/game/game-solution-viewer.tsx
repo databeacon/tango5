@@ -7,18 +7,17 @@ import { GameLayout } from '~/components/game/game-layout';
 import { LoadingSpinner } from '~/components/ui/loading-spinner';
 
 type GameSolutionViewerProps = {
-    scenario: ScenarioSelect | undefined;
+    open: boolean;
     onClose: () => void;
+    scenario: ScenarioSelect | undefined;
 };
 
 export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProps>) => {
     const popupRef = useRef<HTMLDialogElement>(null);
     const [loading, setLoading] = useState(true);
 
-    const open = !!props.scenario;
-
     useEffect(() => {
-        if (!open) return;
+        if (!props.open) return;
 
         setLoading(true);
 
@@ -29,7 +28,7 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
         return () => {
             clearTimeout(tid);
         };
-    }, [open]);
+    }, [props.open]);
 
     useEffect(() => {
         const popup = popupRef.current;
@@ -42,10 +41,10 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
     }, [props.onClose]);
 
     useEffect(() => {
-        if (open) {
+        if (props.open) {
             popupRef.current?.showModal();
         }
-    }, [open]);
+    }, [props.open]);
 
     return (
         <PopupWindow
