@@ -16,14 +16,7 @@ export type UserGameProps = {
     demoMode?: boolean;
 };
 
-export type ScenarioUserGame = {
-    data: Scenario;
-    id: number;
-    active: boolean;
-    demo: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-};
+export type ScenarioUserGame = Omit<ScenarioSelect, 'data'> & { data: Scenario };
 
 export type CompleteDemoPayload = {
     played: ScenarioSelect['id'][];
