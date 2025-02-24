@@ -20,9 +20,10 @@ import Image from 'next/image';
 type GameProps = {
     scenario: ScenarioSelect;
     revealSolution?: boolean;
-    countdownRunning?: boolean;
+    pauseGame?: boolean;
     unplayedScenarios?: number;
     backstageAccess?: boolean;
+    handleOpenMenu?: (timeRemaining: number, cpdsRemaining: number) => void;
 };
 
 const posthogEvents = {
@@ -198,6 +199,16 @@ const Game = (props: PropsWithoutRef<GameProps>) => {
         setSelectedFlight(null);
     };
 
+    const handleOpenMenu = () => {
+        if (props.handleOpenMenu) {
+            const elapsed = gameStartTimeMs.current
+                ? Math.round((GAME_TIMEOUT_MS - performance.now() - gameStartTimeMs.current) / 1000)
+                : 0;
+            const cpdsFounded = scenario.data.numberCorrect(selectedPairs);
+            props.handleOpenMenu(elapsed, cpdsFounded);
+        }
+    };
+
     return (
         <main>
             <div className="fixed bottom-1 right-72 z-10 mt-10 text-xs text-white/15">{scenario.id}</div>
@@ -208,7 +219,7 @@ const Game = (props: PropsWithoutRef<GameProps>) => {
                 </div>
             </IconButton>
 
-            <IconButton href={props.backstageAccess ? '/backstage/scenarios' : '/app/scores'} hoverText={'Options'}>
+            <IconButton onClick={handleOpenMenu} hoverText={'Options'}>
                 <Image
                     src="/images/gear.svg"
                     width={27}
@@ -248,7 +259,7 @@ const Game = (props: PropsWithoutRef<GameProps>) => {
                     <GameTimer
                         className="fixed left-36 top-5 z-10 transition-all hover:scale-110"
                         initialCount={GAME_TIMEOUT_MS / 1000}
-                        running={!props.revealSolution ? !props.countdownRunning && gameSuccess === null : false}
+                        running={!props.revealSolution ? !props.pauseGame && gameSuccess === null : false}
                         onComplete={() => setGameSuccess(false)}
                     />
                 </>
