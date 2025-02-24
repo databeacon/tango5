@@ -136,7 +136,7 @@ export async function completeDemoGame(
     const scenario = unplayedScenarios[0];
 
     if (!scenario) {
-        return { error: true, errorMessage: 'Error getting next scenario' };
+        return { error: true, errorMessage: 'Error getting next scenario', played: [] };
     }
 
     return { scenario, pendingScenarios: unplayedScenarios.length, played, error: false };
