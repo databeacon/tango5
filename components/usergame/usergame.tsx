@@ -72,6 +72,7 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
 
             setEnableNext(true);
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [scenario.id, props.backstageAccess, completeGameAction, isDemo]
     );
 

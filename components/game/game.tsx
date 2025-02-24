@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithoutRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Duration } from 'luxon';
 import { GAME_TIMEOUT_MS, TIME_TO_REMOVE_FAILED_PAIRS_MS } from '~/lib/constants';
 import { Pcd } from '~/lib/domain/pcd';
@@ -10,19 +10,19 @@ import { ScenarioMap } from '~/components/scenario/scenario-map';
 import React from 'react';
 import { ScenarioUserGame } from '~/lib/types';
 
+export type ResetGameHandle = {
+    resetGame: () => void;
+};
 type GameProps = {
     scenario: ScenarioUserGame;
     revealSolution?: boolean;
     countdownRunning?: boolean;
+    ref: RefObject<ResetGameHandle | null>;
     startGame: () => void;
     endGame: (success: boolean, playTime: string | null) => void;
 };
 
-export type ResetGameHandle = {
-    resetGame: () => void;
-};
-
-const Game = React.forwardRef<ResetGameHandle, PropsWithoutRef<GameProps>>((props, ref) => {
+const Game = ({ ref, ...props }: GameProps) => {
     const { scenario, revealSolution, startGame, endGame } = props;
     // Game related state
     const [selectedFlight, setSelectedFlight] = useState<string | null>(null);
@@ -164,7 +164,7 @@ const Game = React.forwardRef<ResetGameHandle, PropsWithoutRef<GameProps>>((prop
             />
         </main>
     );
-});
+};
 
 Game.displayName = 'Game';
 
