@@ -12,39 +12,49 @@ type GameSolutionViewerProps = {
     scenario: ScenarioSelect | undefined;
 };
 
+const ANIMATION_DURATION = 300;
+
 export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProps>) => {
     const popupRef = useRef<HTMLDialogElement>(null);
     const [loading, setLoading] = useState(true);
 
+    const { open, onClose } = props;
+
     useEffect(() => {
-        if (!props.open) return;
+        if (!open) return;
 
         setLoading(true);
 
         const tid = setTimeout(() => {
             setLoading(false);
-        }, 300);
+        }, ANIMATION_DURATION);
 
         return () => {
             clearTimeout(tid);
         };
-    }, [props.open]);
+    }, [open]);
 
     useEffect(() => {
         const popup = popupRef.current;
         if (!popup) return;
 
-        popup.addEventListener('close', props.onClose);
-        return () => {
-            popup.removeEventListener('close', props.onClose);
+        const closeCallback = () => onClose();
+
+        const closeCallbackWithDelay = () => {
+            setTimeout(closeCallback, ANIMATION_DURATION);
         };
-    }, [props.onClose]);
+
+        popup.addEventListener('close', closeCallbackWithDelay);
+        return () => {
+            popup.removeEventListener('close', closeCallbackWithDelay);
+        };
+    }, [onClose]);
 
     useEffect(() => {
-        if (props.open) {
+        if (open) {
             popupRef.current?.showModal();
         }
-    }, [props.open]);
+    }, [open]);
 
     return (
         <PopupWindow
