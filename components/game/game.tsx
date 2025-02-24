@@ -50,7 +50,7 @@ const Game = React.forwardRef<ResetGameHandle, PropsWithoutRef<GameProps>>((prop
     }, [scenario, gameSuccess, endGame]);
 
     useEffect(() => {
-        if (scenario.data.isSolution(selectedPairs) || props.revealSolution) {
+        if (scenario.data.isSolution(selectedPairs) || revealSolution) {
             setGameSuccess(true);
         }
     }, [scenario, selectedPairs, revealSolution]);
