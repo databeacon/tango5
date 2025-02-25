@@ -17,7 +17,6 @@ type GameProps = {
     scenario: ScenarioUserGame;
     revealSolution?: boolean;
     pauseGame?: boolean;
-    unplayedScenarios?: number;
     ref: RefObject<ResetGameHandle | null>;
     startGame: () => void;
     endGame: (success: boolean, playTime: string | null) => void;
