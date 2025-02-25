@@ -16,7 +16,7 @@ export type ResetGameHandle = {
 type GameProps = {
     scenario: ScenarioUserGame;
     revealSolution?: boolean;
-    countdownRunning?: boolean;
+    pauseGame?: boolean;
     ref: RefObject<ResetGameHandle | null>;
     startGame: () => void;
     endGame: (success: boolean, playTime: string | null) => void;
@@ -147,7 +147,7 @@ const Game = ({ ref, ...props }: GameProps) => {
                     <GameTimer
                         className="fixed left-36 top-5 z-10 transition-all hover:scale-110"
                         initialCount={GAME_TIMEOUT_MS / 1000}
-                        running={!props.countdownRunning && gameSuccess === null}
+                        running={!props.revealSolution ? !props.pauseGame && gameSuccess === null : false}
                         onComplete={() => setGameSuccess(false)}
                     />
                 </>
