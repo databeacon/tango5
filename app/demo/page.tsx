@@ -5,7 +5,7 @@ import { getDemoScenarios } from '~/lib/db/queries';
 
 export default async function Page() {
     const demoScenarios = await getDemoScenarios();
-    const scenario = demoScenarios[demoScenarios.length - 1];
+    const scenario = demoScenarios.at(-1);
 
     // this should never happen, take the user to summary page just in case
     if (!scenario) {
