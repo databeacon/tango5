@@ -1,4 +1,4 @@
-dialog {
+dialog:not([open]) {
     animation: bounce-fade-out 0.3s ease-in-out;
 }
 
@@ -6,11 +6,11 @@ dialog:focus-visible {
     outline: none;
 }
 
-dialog:open {
+dialog[open] {
     animation: bounce-fade-in 0.3s ease-in-out;
 }
 
-dialog:open::backdrop {
+dialog[open]::backdrop {
     animation: backdrop-fade-in 0.3s ease-out forwards;
 }
 
