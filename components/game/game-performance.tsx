@@ -2,7 +2,7 @@ import { PropsWithoutRef } from 'react';
 import { getCurrentUserGamesPerformance } from '~/lib/actions';
 import { formatDuration } from '~/lib/utils';
 
-export const GamePerformanceStat = (props: PropsWithoutRef<{ stat: string; description: string }>) => {
+const GamePerformanceStat = (props: PropsWithoutRef<{ stat: string; description: string }>) => {
     return (
         <article className="flex max-w-[380px] select-none items-center gap-3 rounded-full bg-navbarBG py-5 pl-8 pr-4 hover:brightness-125">
             <div className="font-barlow text-[70px] leading-none">{props.stat}</div>

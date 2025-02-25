@@ -17,14 +17,8 @@ type GameSceneProps = {
 export const GameScene = (props: PropsWithoutRef<GameSceneProps>) => {
     const [countdownRunning, setCountdownRunning] = useState(!props.revealSolution);
     const [openMenu, setOpenMenu] = useState(false);
-    const [gameCurrentStatus] = useState({
-        timeRemaining: 0,
-        cdpsFounded: 0,
-        cpdsTotal: props.scenario.data.pcds.length
-    });
 
     const handleOpenMenu = () => {
-        //setGameCurrentStatus({ timeRemaining, cdpsFounded, cpdsTotal: props.scenario.data.pcds.length });
         setOpenMenu(true);
     };
 
@@ -34,17 +28,12 @@ export const GameScene = (props: PropsWithoutRef<GameSceneProps>) => {
                 <GameMenu
                     open={openMenu}
                     handleCloseMenu={() => setOpenMenu(false)}
-                    gameCurrentStatus={gameCurrentStatus}
                     backstageAccess={props.backstageAccess}>
-                    <UserGame
-                        countdownRunning={countdownRunning || openMenu}
-                        handleOpenMenu={handleOpenMenu}
-                        {...props}
-                    />
+                    <UserGame pauseGame={countdownRunning || openMenu} handleOpenMenu={handleOpenMenu} {...props} />
                 </GameMenu>
             </GameInitialCountdown>
         );
     }
 
-    return <UserGame countdownRunning={countdownRunning} {...props} />;
+    return <UserGame pauseGame={countdownRunning} {...props} />;
 };

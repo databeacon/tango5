@@ -16,7 +16,7 @@ export type UserGameProps = {
     scenario: ScenarioSelect;
     remainingScenarios?: number;
     backstageAccess?: boolean;
-    countdownRunning?: boolean;
+    pauseGame?: boolean;
     revealSolution?: boolean;
     demoMode?: boolean;
     handleOpenMenu?: () => void;
@@ -186,6 +186,7 @@ const UserGame = (props: PropsWithoutRef<UserGameProps>) => {
                 revealSolution={props.revealSolution}
                 startGame={handleGameStart}
                 endGame={handleGameFinish}
+                pauseGame={props.pauseGame}
             />
         </>
     );
