@@ -12,56 +12,76 @@ import {
     deleteUserGames,
     getUserGamesPage as getDBUserGamesPage,
     getCurrentUserGamesPage as getDBCurrentUserGamesPage,
-    getCurrentUserGamesPerformance as getDBCurrentUserGamesPerformance
+    getCurrentUserGamesPerformance as getDBCurrentUserGamesPerformance,
+    getUnplayedDemoScenarios
 } from '~/lib/db/queries';
-import { UserGameInsert, UserGameSelect } from '~/lib/types';
+import { UserGameInsert, UserGameInsertPayload, UserGameSelect } from '~/lib/types';
 import revalidateCacheTag, { ActionScenarioState, ActionState } from '.';
 
 export async function completeUserGame(
     _prevState: ActionScenarioState,
-    payload: Pick<UserGameInsert, 'scenarioId' | 'playTime' | 'success'>
+    payload: UserGameInsertPayload
 ): Promise<ActionScenarioState> {
     const user = await currentUser();
-    const { scenarioId, playTime, success } = payload;
+    const { scenarioId, playTime, success, isDemo, played } = payload;
 
-    if (!user) {
-        return { error: true, errorMessage: 'User not found' };
+    if (!isDemo) {
+        if (!user) {
+            return { error: true, errorMessage: 'User not found', played: [] };
+        }
+
+        const userGameScenarios = new Set((await getUserGames(user.id)).map((ug) => ug.scenarioId));
+        if (userGameScenarios.has(scenarioId)) {
+            return { error: true, errorMessage: `Scenario ${scenarioId} has already been played`, played: [] };
+        }
+
+        const userGame: UserGameInsert = {
+            userId: user.id,
+            scenarioId,
+            playTime,
+            success
+        };
+
+        const res = await writeUserGame(userGame);
+
+        if (res.length === 0) {
+            return { error: true, errorMessage: 'Error saving user game', played: [] };
+        }
+
+        // After saving a new user game, invalidate cache for that entity
+        revalidateCacheTag(cacheTags.userGames);
+
+        const unplayedScenarios = await getUnplayedScenarios(user.id);
+
+        if (unplayedScenarios.length === 0) {
+            return { scenario: undefined, pendingScenarios: 0, error: false, played: [] };
+        }
+
+        const scenario = await getRandom(unplayedScenarios.map((s) => s.id));
+
+        if (!scenario) {
+            return { error: true, errorMessage: 'Error getting next scenario', played: [] };
+        }
+
+        return { scenario, pendingScenarios: unplayedScenarios.length, error: false, played: [] };
     }
 
-    const userGameScenarios = new Set((await getUserGames(user.id)).map((ug) => ug.scenarioId));
-    if (userGameScenarios.has(scenarioId)) {
-        return { error: true, errorMessage: `Scenario ${scenarioId} has already been played` };
+    if (isDemo) {
+        const unplayedScenarios = await getUnplayedDemoScenarios(played);
+
+        if (unplayedScenarios.length === 0) {
+            return { scenario: undefined, pendingScenarios: 0, played: [], error: false };
+        }
+
+        const scenario = unplayedScenarios[0];
+
+        if (!scenario) {
+            return { error: true, errorMessage: 'Error getting next scenario', played: [] };
+        }
+
+        return { scenario, pendingScenarios: unplayedScenarios.length, played, error: false };
     }
-
-    const userGame: UserGameInsert = {
-        userId: user.id,
-        scenarioId,
-        playTime,
-        success
-    };
-
-    const res = await writeUserGame(userGame);
-
-    if (res.length === 0) {
-        return { error: true, errorMessage: 'Error saving user game' };
-    }
-
-    // After saving a new user game, invalidate cache for that entity
-    revalidateCacheTag(cacheTags.userGames);
-
-    const unplayedScenarios = await getUnplayedScenarios(user.id);
-
-    if (unplayedScenarios.length === 0) {
-        return { scenario: undefined, pendingScenarios: 0, error: false };
-    }
-
-    const scenario = await getRandom(unplayedScenarios.map((s) => s.id));
-
-    if (!scenario) {
-        return { error: true, errorMessage: 'Error getting next scenario' };
-    }
-
-    return { scenario, pendingScenarios: unplayedScenarios.length, error: false };
+    return { error: true, errorMessage: 'User not found', played: [] };
 }
 
 export async function deleteUserGame(_prevState: ActionState, id: UserGameSelect['id']): Promise<ActionState> {

@@ -3,8 +3,8 @@
 import { PropsWithoutRef, useEffect, useRef, useState } from 'react';
 import { ScenarioSelect } from '~/lib/types';
 import { PopupWindow } from '~/components/ui/popup-window';
-import { GameLayout } from '~/components/game/game-layout';
 import { LoadingSpinner } from '~/components/ui/loading-spinner';
+import { GameScene } from '~/components/game/game-scene';
 
 type GameSolutionViewerProps = {
     open: boolean;
@@ -64,7 +64,7 @@ export const GameSolutionViewer = (props: PropsWithoutRef<GameSolutionViewerProp
                         <LoadingSpinner size={36} />
                     </div>
                 )}
-                {!loading && props.scenario && <GameLayout scenario={props.scenario} revealSolution />}{' '}
+                {!loading && props.scenario && <GameScene scenario={props.scenario} revealSolution />}{' '}
                 {!loading && !props.scenario && <span>{'Error loading scenario'}</span>}
             </div>
         </PopupWindow>
