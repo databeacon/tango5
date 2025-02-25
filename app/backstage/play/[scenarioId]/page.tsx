@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getScenario } from '~/lib/db/queries';
-import { GameLayout } from '~/components/game/game-layout';
+import { GameScene } from '~/components/game/game-scene';
 
 export default async function Page({ params }: { params: Promise<{ scenarioId: number }> }) {
     const id = (await params).scenarioId;
@@ -11,5 +11,5 @@ export default async function Page({ params }: { params: Promise<{ scenarioId: n
 
     if (!scenario) notFound();
 
-    return <GameLayout backstageAccess scenario={scenario} />;
+    return <GameScene backstageAccess scenario={scenario} />;
 }

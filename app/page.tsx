@@ -102,12 +102,26 @@ export default async function Page() {
                     </div>
                 </section>
 
-                <LinkButton href={user ? '/app/play' : '/login'} variant="map" className="z-20 px-6 py-8 text-3xl">
-                    <div className="flex items-center gap-2">
-                        {'Play'}
-                        <Image width="22" height="17" src="/images/arrow-full.svg" alt="Play Tango5" />
-                    </div>
-                </LinkButton>
+                <div className="z-20 flex flex-row gap-11">
+                    {!user && (
+                        <LinkButton
+                            href={'/login'}
+                            variant="outline"
+                            className="rounded-full px-6 py-8 font-barlow text-3xl">
+                            <div className="flex items-center gap-2">{'Sign Up'}</div>
+                        </LinkButton>
+                    )}
+
+                    <LinkButton
+                        href={user ? '/app/play' : '/demo'}
+                        variant="map"
+                        className="px-6 py-8 font-barlow text-3xl">
+                        <div className="flex items-center gap-2">
+                            {user ? 'Play' : 'Try it now!'}
+                            <Image width="22" height="17" src="/images/arrow-full.svg" alt="Play Tango5" />
+                        </div>
+                    </LinkButton>
+                </div>
 
                 <section className="z-20 text-center font-barlow text-4xl font-thin xl:text-5xl 2xl:text-6xl">
                     Who is it for?

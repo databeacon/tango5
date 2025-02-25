@@ -90,6 +90,7 @@ export const UserGamesTable = (props: PropsWithoutRef<UserGamesTableProps>) => {
             id: row.original.scenarioId,
             data: row.original.scenarioData,
             active: true,
+            demo: false,
             createdAt: new Date(),
             updatedAt: new Date()
         }); // TODO: we should not have to pass all the fields to the game component, just the id and the data should be enough
