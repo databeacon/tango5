@@ -4,7 +4,7 @@ import Link from 'next/link';
 type GameMenuProps = {
     backstageAccess?: boolean;
     open?: boolean;
-    handleCloseMenu: () => void;
+    onClose: () => void;
 };
 export const GameMenu = (props: PropsWithChildren<GameMenuProps>) => {
     return (
@@ -16,7 +16,7 @@ export const GameMenu = (props: PropsWithChildren<GameMenuProps>) => {
                         <div className="font-map font-barlow text-7xl font-light">Game paused</div>
                         <ul className="w-96 space-y-3 rounded-3xl bg-map p-5 text-center font-barlow text-2xl font-light">
                             <li className="w-full border-b border-white py-3">
-                                <button className="hover:text-background" onClick={props.handleCloseMenu}>
+                                <button className="hover:text-background" onClick={props.onClose}>
                                     Resume
                                 </button>
                             </li>

@@ -25,10 +25,7 @@ export const GameScene = (props: PropsWithoutRef<GameSceneProps>) => {
     if (!props.revealSolution) {
         return (
             <GameInitialCountdown running={countdownRunning} onComplete={() => setCountdownRunning(false)}>
-                <GameMenu
-                    open={openMenu}
-                    handleCloseMenu={() => setOpenMenu(false)}
-                    backstageAccess={props.backstageAccess}>
+                <GameMenu open={openMenu} onClose={() => setOpenMenu(false)} backstageAccess={props.backstageAccess}>
                     <UserGame pauseGame={countdownRunning || openMenu} handleOpenMenu={handleOpenMenu} {...props} />
                 </GameMenu>
             </GameInitialCountdown>
