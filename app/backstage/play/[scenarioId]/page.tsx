@@ -1,19 +1,15 @@
 import { notFound } from 'next/navigation';
 import { getScenario } from '~/lib/db/queries';
-import { GameLayout } from '~/components/game/game-layout';
+import { GameScene } from '~/components/game/game-scene';
 
-type Params = Promise<{ scenarioId: number }>;
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-
-export default async function Page({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
+export default async function Page({ params }: { params: Promise<{ scenarioId: number }> }) {
     const id = (await params).scenarioId;
-    const showSolution = (await searchParams).solution === 'true';
 
     if (isNaN(id)) notFound();
 
     const scenario = await getScenario(id);
 
-    if (!scenario?.data) notFound();
+    if (!scenario) notFound();
 
-    return <GameLayout backstageAccess scenario={scenario} revealSolution={showSolution} />;
+    return <GameScene backstageAccess scenario={scenario} />;
 }

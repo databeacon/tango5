@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { and, avg, count, eq } from 'drizzle-orm';
 import { db } from '~/lib/db';
-import { UserGamesTable } from '~/lib/db/schema';
+import { ScenariosTable, UserGamesTable } from '~/lib/db/schema';
 import { UserGameInsert, UserGameSelect } from '~/lib/types';
 
 export const writeUserGame = async (userGame: UserGameInsert) => {
@@ -34,8 +34,18 @@ export const getUserGamesPage = async (pageIndex: number, pageSize: number) => {
     try {
         const total = await db.select({ value: count() }).from(UserGamesTable);
         const values = await db
-            .select()
+            .select({
+                id: UserGamesTable.id,
+                userId: UserGamesTable.userId,
+                scenarioId: UserGamesTable.scenarioId,
+                success: UserGamesTable.success,
+                playTime: UserGamesTable.playTime,
+                scenarioData: ScenariosTable.data,
+                createdAt: UserGamesTable.createdAt,
+                updatedAt: UserGamesTable.updatedAt
+            })
             .from(UserGamesTable)
+            .innerJoin(ScenariosTable, eq(UserGamesTable.scenarioId, ScenariosTable.id))
             .orderBy(UserGamesTable.id)
             .limit(pageSize)
             .offset(pageIndex);
@@ -61,8 +71,18 @@ export const getCurrentUserGamesPage = async (pageIndex: number, pageSize: numbe
             .from(UserGamesTable)
             .where(eq(UserGamesTable.userId, user.id));
         const values = await db
-            .select()
+            .select({
+                id: UserGamesTable.id,
+                userId: UserGamesTable.userId,
+                scenarioId: UserGamesTable.scenarioId,
+                success: UserGamesTable.success,
+                playTime: UserGamesTable.playTime,
+                scenarioData: ScenariosTable.data,
+                createdAt: UserGamesTable.createdAt,
+                updatedAt: UserGamesTable.updatedAt
+            })
             .from(UserGamesTable)
+            .innerJoin(ScenariosTable, eq(UserGamesTable.scenarioId, ScenariosTable.id))
             .where(eq(UserGamesTable.userId, user.id))
             .limit(pageSize)
             .offset(pageIndex);
